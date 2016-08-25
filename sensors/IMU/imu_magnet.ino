@@ -16,7 +16,7 @@ void setup() {
 }
 
 void loop() {
-  
+
   int gx, gy, gz;         // raw gyro values
 
   // read raw gyro measurements from device
@@ -30,7 +30,7 @@ void loop() {
   Serial.print("\t");
   Serial.print(gz);
   Serial.println();
-  
+
   int ax, ay, az;         // raw gyro values
 
   // read raw gyro measurements from device
@@ -44,7 +44,7 @@ void loop() {
   Serial.print("\t");
   Serial.print(az);
   Serial.println();
-  
+
   int mx, my, mz;         // raw gyro values
 
   // read raw gyro measurements from device
@@ -59,6 +59,25 @@ void loop() {
   Serial.print(mz);
   Serial.println();
 
-  delay(2000);
+  int hall = 0;         // raw gyro values
+
+  // read raw gyro measurements from device
+  BMI160.readHall(hall);
+  // display tab-separated gyro x/y/z values
+  Serial.print("h:\t");
+  Serial.print(hall);
+  Serial.println();
+
+  unsigned int temp = 0;         // raw gyro values
+
+  // read raw gyro measurements from device
+  temp = BMI160.readTemperature();
+  // display tab-separated gyro x/y/z values
+  Serial.print("t:\t");
+  Serial.print((temp-1000)*0.01);
+  Serial.println("C");
+
+  delay(100);
 }
+
 

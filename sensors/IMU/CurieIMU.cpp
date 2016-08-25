@@ -1587,6 +1587,11 @@ void CurieIMUClass::readAccelerometer(int& x, int& y, int& z)
     z = sz;
 }
 
+void CurieIMUClass::readHall(int& x)
+{
+   x = getHall();
+}
+
 void CurieIMUClass::readMag(int& x, int& y, int& z)
 {
     int16_t sx, sy, sz;

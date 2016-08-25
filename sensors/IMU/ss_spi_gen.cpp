@@ -9,7 +9,7 @@
 extern "C" {
 #endif
 
-#define DEBUG 1
+//#define DEBUG 1
 
 int ss_spi_cs = -1;
 //#define DEBUG

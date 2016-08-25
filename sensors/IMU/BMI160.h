@@ -51,7 +51,7 @@ THE SOFTWARE.
 
 #define BMI160_MAG_CONF            0x44
 
-#define BMI160_MAG_IF_CONF         0x20
+#define BMI160_MAG_IF_CONF         0x6B
 
 #define BMI160_RA_MAG_X_L          0x04
 #define BMI160_RA_MAG_X_H          0x05
@@ -64,9 +64,32 @@ THE SOFTWARE.
 #define BMI160_RA_HALL_H           0x0B
 
 #define BMI160_MAG_ADDR            0x4B
-#define BMM150_I2C_ADDR            0x10 
+#define BMM150_I2C_ADDR            0x20 
 
 #define BMI160_CMD_MAG_MODE_NORMAL 0x19
+
+#define BMI160_RA_MAG_WRITE_DATA          0x4F
+#define BMI160_RA_MAG_WRITE_ADDR          0x4E
+
+#define BMI160_RA_MAG_READ_ADDR           0x4D
+
+#define BMI160_BMM150_POWER_ON			(0x01)
+
+#define BMI160_BMM_POWER_MODE_REG		(0x06)
+
+#define BMI160_BMM150_FORCE_MODE		(0x02)
+
+#define BMI160_USER_MAG_CONFIG_ADDR				(0X44)
+
+/**************************************************/
+/**\name	BMM150 REGISTER DEFINITION */
+/*************************************************/
+#define BMI160_BMM150_CHIP_ID           (0x40)
+#define BMI160_BMM150_POWER_CONTROL_REG	(0x4B)
+#define BMI160_BMM150_POWER_MODE_REG		(0x4C)
+#define BMI160_BMM150_DATA_REG			(0x42)
+#define BMI160_BMM150_XY_REP			(0x51)
+#define BMI160_BMM150_Z_REP				(0x52)
 
 /***************************************************/
 /**\name MAG INTERFACE REGISTERS*/
@@ -635,6 +658,7 @@ class BMI160Class {
         void getMotion6(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx, int16_t* gy, int16_t* gz);
         void getAcceleration(int16_t* x, int16_t* y, int16_t* z);
         void getMag(int16_t* x, int16_t* y, int16_t* z);
+        int16_t getHall();
         int16_t getAccelerationX();
         int16_t getAccelerationY();
         int16_t getAccelerationZ();

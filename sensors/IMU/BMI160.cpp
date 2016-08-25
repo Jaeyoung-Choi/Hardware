@@ -126,22 +126,92 @@ void BMI160Class::initialize()
                                 BMI160_GYR_PMU_STATUS_LEN))
         delay(1);
         
-    /* set BMM150 I2C Adress */
-    reg_write(BMI160_MAG_ADDR, BMM150_I2C_ADDR); 
+        
+    delay(100);
+        
     /* Power up the magnetometer */
     reg_write(BMI160_RA_CMD, BMI160_CMD_MAG_MODE_NORMAL);
-    delay(1);
+    delay(5);
+    
     /* Wait for power-up to complete */
     while (0x1 != reg_read_bits(BMI160_RA_PMU_STATUS,
                                 BMI160_MAG_PMU_STATUS_BIT,
                                 BMI160_MAG_PMU_STATUS_LEN))
-        delay(1);
+        delay(5);
         
+    /* set BMM150 I2C Adress */
+    reg_write(BMI160_MAG_ADDR, BMM150_I2C_ADDR); 
+    delay(5);
+    
+    /* set BMM150 to manual mode */
+    reg_write(BMI160_USER_MAG_IF_1_ADDR, 0x80);
+    delay(5);
+    
     /* set BMI160 sec. interface to I2C */
     reg_write(BMI160_MAG_IF_CONF, 0x20); 
- 
+    delay(5);
     
+    for (int i = 0; i < 20; i++) {
+      /* wakeup BMM150 */
+      reg_write(BMI160_RA_MAG_WRITE_DATA, BMI160_BMM150_POWER_ON); 
+      delay(5);
+    
+      /* wakeup BMM150 */
+      reg_write(BMI160_RA_MAG_WRITE_ADDR, BMI160_BMM150_POWER_CONTROL_REG); 
+    
+      delay(10);
+    
+      /* check wakeup BMM150 */
+      reg_write(BMI160_RA_MAG_READ_ADDR, BMI160_BMM150_POWER_CONTROL_REG); 
+      delay(5);
+    
+      Serial.print("BMM150 Status: ");
+      Serial.println(reg_read(BMI160_RA_MAG_X_L), BIN);
+      
+      if (reg_read(BMI160_RA_MAG_X_L) == BMI160_BMM150_POWER_ON) {
+        break;
+      }
+    }
+    
+    /* check ID BMM150 */
+    reg_write(BMI160_RA_MAG_READ_ADDR, BMI160_BMM150_CHIP_ID); 
+    delay(5);
+    
+    Serial.print("BMM150 ID: ");
+    Serial.println(reg_read(BMI160_RA_MAG_X_L), HEX);
+    
+    /* enable BMM150 */
+    reg_write(BMI160_RA_MAG_WRITE_DATA, BMI160_BMM_POWER_MODE_REG); 
+    delay(5);
+    
+    /* enable BMM150 */
+    reg_write(BMI160_RA_MAG_WRITE_ADDR, BMI160_BMM150_POWER_MODE_REG); 
+    
+    delay(10);
 
+    
+    /* force BMM150 */
+    reg_write(BMI160_RA_MAG_WRITE_DATA, BMI160_BMM150_FORCE_MODE); 
+    delay(5);
+    
+    /* force BMM150 */
+    reg_write(BMI160_RA_MAG_WRITE_ADDR, BMI160_BMM150_POWER_MODE_REG); 
+    
+    delay(10);
+    
+    /* set read adress BMM150 */
+    reg_write(BMI160_RA_MAG_READ_ADDR, BMI160_BMM150_DATA_REG); 
+    delay(5);
+    
+    reg_write(BMI160_USER_MAG_CONFIG_ADDR, 0b0110);
+    
+    delay(5);
+
+    
+    /* set BMM150 to auto mode */
+    reg_write(BMI160_USER_MAG_IF_1_ADDR, 0x00);
+    
+    
     setFullScaleGyroRange(BMI160_GYRO_RANGE_250);
     setFullScaleAccelRange(BMI160_ACCEL_RANGE_2G);
 
@@ -153,8 +223,8 @@ void BMI160Class::initialize()
     
       
     
-    /* set BMM150 to manual mode */
-    reg_write(BMI160_USER_MAG_IF_1_ADDR, 0x80);
+    /* set BMM150 to auto mode */
+    //reg_write(BMI160_USER_MAG_IF_1_ADDR, 0x00);
 }
 
 /** Get Device ID.
@@ -2218,6 +2288,13 @@ void BMI160Class::getMotion6(int16_t* ax, int16_t* ay, int16_t* az, int16_t* gx,
     *ax = (((int16_t)buffer[7])  << 8) | buffer[6];
     *ay = (((int16_t)buffer[9])  << 8) | buffer[8];
     *az = (((int16_t)buffer[11]) << 8) | buffer[10];
+}
+
+int16_t BMI160Class::getHall() {
+    uint8_t buffer[2];
+    buffer[0] = BMI160_RA_HALL_L;
+    serial_buffer_transfer(buffer, 1, 2);
+    return (((int16_t)buffer[1]) << 8) | buffer[0];
 }
 
 /** Get 3-axis accelerometer readings.

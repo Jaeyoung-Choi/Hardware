@@ -191,6 +191,7 @@ class CurieIMUClass : public BMI160Class {
         void readAccelerometer(int& x, int& y, int& z);
         void readMag(int& x, int& y, int& z);
         void readGyro(int& x, int& y, int& z);
+        void readHall(int& x);
 
         int readAccelerometer(int axis);
         int readGyro(int axis);
